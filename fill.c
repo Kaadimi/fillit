@@ -22,6 +22,8 @@ typedef struct		s_fill
 	int		x;
 	int		y;
 	int		player;
+	char		**map;
+	int		counter;
 }			t_fill;
 
 typedef struct		s_piece
@@ -102,6 +104,8 @@ void	init_struct(t_fill *start)
 	start->x = 0;
 	start->y = 0;
 	start->player = 0;
+	start->map = NULL;
+	start->counter = 0;
 }
 
 void	assign_player(t_fill *stats, char *line)
@@ -112,20 +116,29 @@ void	assign_player(t_fill *stats, char *line)
 		stats->player = 2;
 }
 
-char	**map_create(char *line, t_fill stats)
-{
-	
-}
-
-void	map_size(t_fill *stats, char *line, int fd)
+void	map_create(t_fill *stats, char *line, int fd)
 {
 	char **tab;
+	int i;
 
+	 i = 0;
 	tab = ft_strsplit(line, ' ');
 	dprintf(fd, "%s%s\n", tab[1], tab[2]);
 	stats->y = ft_atoi(tab[1]);
 	stats->x = ft_atoi(tab[2]);
+	stats->map = (char **)malloc(sizeof(char *) * stats->y);
+	while (i < stats->y)
+		stats->map[i++] = (char *)malloc(sizeof(char) * stats->x);
 	tab_free(tab);
+}
+
+void	fill_tab(t_fill *stats, char *line, int fd)
+{
+	char	**tmp;
+
+	tmp = ft_strsplit(line, ' ');
+	ft_strcpy(stats->map[stats->counter - 1], tmp[1]);
+	tab_free(tmp);
 }
 
 int main()
@@ -141,11 +154,20 @@ int main()
 		assign_player(&stats, line);
 	get_next_line(0, &line);
 	if (ft_strstr(line, "Plateau"))
+		map_create(&stats, line, fd);
+	while (stats.counter <= stats.y)
 	{
-		map_size(&stats, line, fd);
-		map = map_create();
+		get_next_line(0, &line);
+		if (stats.counter > 0)
+			fill_tab(&stats, line, fd);
+		stats.counter++;
+	}
+	stats.counter = 0; 
+	while (stats.counter < stats.y)
+	{
+		dprintf(fd, "%s\n", stats.map[stats.counter]);
+		stats.counter++;
 	}
 	dprintf(fd, " player == %d x == %d y == %d\n", stats.player, stats.x, stats.y);
-	dprintf(fd, "%s\n", line);
 	return(0);
 }
