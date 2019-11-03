@@ -17,12 +17,29 @@
 #include "libft/libft.h"
 #define BUFF_SIZE 1
 
-typedef struct	s_fill
+typedef struct		s_fill
 {
-	int x;
-	int y;
-	int player;
-}				t_fill;
+	int		x;
+	int		y;
+	int		player;
+}			t_fill;
+
+typedef struct		s_piece
+{
+	int		x;
+	int		y;
+}			t_piece;
+
+void	tab_free(char **tab)
+{
+	int i;
+
+	i = 0;
+	while (tab[i])
+		free(tab[i++]);
+	free(tab);
+	tab = NULL;
+}
 
 char	*ft_freejoin(char *s1, char *s2)
 {
@@ -46,28 +63,31 @@ char	*ft_freejoin(char *s1, char *s2)
 int		get_next_line(const int fd, char **line)
 {
 	int			ret;
-	static char	*temp[256];
+	static char		*temp;
 	int			i;
-	char		buf[BUFF_SIZE + 1];
+	char			buf[BUFF_SIZE + 1];
+	char			*tmp;
 
 	i = 0;
 	if (fd < 0 || !line || read(fd, buf, 0) < 0)
 		return (-1);
-	if (temp[fd] == NULL)
-		temp[fd] = ft_strnew(0);
+	if (temp == NULL)
+		temp = ft_strnew(0);
 	while ((ret = read(fd, buf, BUFF_SIZE)) > 0)
 	{
 		buf[ret] = '\0';
-		temp[fd] = ft_freejoin(temp[fd], buf);
-		if (ft_strchr(temp[fd], '\n'))
+		temp = ft_freejoin(temp, buf);
+		if (ft_strchr(temp, '\n'))
 			break ;
 	}
-	while (temp[fd][i] != '\n' && temp[fd][i])
+	while (temp[i] != '\n' && temp[i])
 		i++;
-	if (!ft_strlen(temp[fd]) && !ret && !i)
+	if (!ft_strlen(temp) && !ret && !i)
 		return (0);
-	*line = ft_strsub(temp[fd], 0, i);
-	temp[fd] = ft_strdup(temp[fd] + i + 1);
+	tmp = temp;
+	*line = ft_strsub(temp, 0, i);
+	temp = ft_strdup(temp + i + 1);
+	free(tmp);
 	return (1);
 }
 
@@ -77,32 +97,55 @@ int		get_next_line(const int fd, char **line)
  *
  *          }*/
 
+void	init_struct(t_fill *start)
+{
+	start->x = 0;
+	start->y = 0;
+	start->player = 0;
+}
+
+void	assign_player(t_fill *stats, char *line)
+{
+	if (ft_strstr(line, "p1"))
+		stats->player = 1;
+	else 
+		stats->player = 2;
+}
+
+char	**map_create(char *line, t_fill stats)
+{
+	
+}
+
+void	map_size(t_fill *stats, char *line, int fd)
+{
+	char **tab;
+
+	tab = ft_strsplit(line, ' ');
+	dprintf(fd, "%s%s\n", tab[1], tab[2]);
+	stats->y = ft_atoi(tab[1]);
+	stats->x = ft_atoi(tab[2]);
+	tab_free(tab);
+}
+
 int main()
 {
-	char buf[BUFF_SIZE + 1];
-	int ret = 0;
-	static int backspace = 0;
 	char	*line;
-	char	*tab;
-	int fd = open("/dev/ttys003", O_RDWR);
-
-	while (ret < 5)
-	{
-		get_next_line(0, &line);
-		dprintf(fd, "%s\n", line);
-		ret++;
-	}
+	char	**map;
+	t_fill stats;
+	int fd = open("/dev/ttys000", O_RDWR);
+	
+	init_struct(&stats);
 	get_next_line(0, &line);
+	if (ft_strstr(line, "exec"))
+		assign_player(&stats, line);
+	get_next_line(0, &line);
+	if (ft_strstr(line, "Plateau"))
+	{
+		map_size(&stats, line, fd);
+		map = map_create();
+	}
+	dprintf(fd, " player == %d x == %d y == %d\n", stats.player, stats.x, stats.y);
 	dprintf(fd, "%s\n", line);
-
-	/*	while ((ret = read(0, buf, BUFF_SIZE)))
-	 *		{
-	 *				buf[ret] = '\0';
-	 *						//dprintf(fd, "%s", buf);
-	 *								line = ft_freejoin(line, buf);
-	 *										if (ft_strstr(line, "\n\0"))
-	 *													dprintf(fd, "this is backspace == %d\n", backspace);
-	 *															//	write(1, buf, 1);
-	 *																}*/
 	return(0);
 }
