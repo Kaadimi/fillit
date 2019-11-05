@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_strtrim.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmostafa <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: hlamhidr <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/10/08 17:45:06 by mmostafa          #+#    #+#             */
-/*   Updated: 2018/10/24 21:10:55 by mmostafa         ###   ########.fr       */
+/*   Created: 2018/10/08 10:54:34 by hlamhidr          #+#    #+#             */
+/*   Updated: 2018/10/15 20:54:20 by hlamhidr         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,22 +14,27 @@
 
 char	*ft_strtrim(char const *s)
 {
-	size_t			f;
-	size_t			d;
-	size_t			e;
-	char			*fr;
+	char	*c;
+	int		i;
+	int		j;
 
-	if (s)
+	if (!s)
+		return (NULL);
+	j = ft_strlen(s);
+	i = 0;
+	while ((s[i] == ' ' || s[i] == '\t' || s[i] == '\n') && s[i])
+		i++;
+	if (i == j)
 	{
-		d = 0;
-		while (s[d] == ' ' || s[d] == '\t' || s[d] == '\n')
-			d++;
-		f = ft_strlen(s) - 1;
-		while ((s[f] == ' ' || s[f] == '\n' || s[f] == '\t') && f >= d)
-			f--;
-		e = f - d + 1;
-		fr = ft_strsub(s, d, (e));
-		return (fr);
+		if (!(c = (char *)malloc(sizeof(char))))
+			return (NULL);
+		c[0] = '\0';
+		return (c);
 	}
-	return (0);
+	j -= 1;
+	while ((s[j] == ' ' || s[j] == '\t' || s[j] == '\n') && j != -1)
+		j--;
+	if (!(c = ft_strsub(s, i, j - i + 1)))
+		return (NULL);
+	return (c);
 }

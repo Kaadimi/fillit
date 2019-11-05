@@ -3,49 +3,61 @@
 /*                                                        :::      ::::::::   */
 /*   ft_itoa.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmostafa <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: ikadimi <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/10/16 13:43:18 by mmostafa          #+#    #+#             */
-/*   Updated: 2018/10/16 14:54:49 by mmostafa         ###   ########.fr       */
+/*   Created: 2018/10/25 16:48:03 by ikadimi           #+#    #+#             */
+/*   Updated: 2018/12/02 17:25:11 by ikadimi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-static void	itoa_isnegative(int *n, int *negative)
+static int	ft_strcnlen(int n)
 {
-	if (*n < 0)
+	int k;
+
+	k = 0;
+	while (n > 9 || n < 0)
 	{
-		*n *= -1;
-		*negative = 1;
+		n = n / 10;
+		k++;
 	}
+	return (k);
+}
+
+static char	*ft_negative(int n, char *fraiche, int k)
+{
+	while (k > 0)
+	{
+		fraiche[k--] = '0' - (n % 10);
+		n = n / 10;
+		fraiche[0] = '-';
+	}
+	return (fraiche);
 }
 
 char		*ft_itoa(int n)
 {
-	int		tmpn;
-	int		len;
-	int		negative;
-	char	*str;
+	char	*fraiche;
+	int		k;
+	int		p;
 
-	if (n == -2147483648)
-		return (ft_strdup("-2147483648"));
-	tmpn = n;
-	len = 2;
-	negative = 0;
-	itoa_isnegative(&n, &negative);
-	while (tmpn /= 10)
-		len++;
-	len += negative;
-	if ((str = (char*)malloc(sizeof(char) * len)) == NULL)
+	k = ft_strcnlen(n);
+	p = k;
+	if (!(fraiche = (char *)malloc(sizeof(char) * k + 2)))
 		return (NULL);
-	str[--len] = '\0';
-	while (len--)
+	if (n < 0)
 	{
-		str[len] = n % 10 + '0';
-		n = n / 10;
+		ft_negative(n, fraiche, k);
 	}
-	if (negative)
-		str[0] = '-';
-	return (str);
+	else
+	{
+		while (k >= 0)
+		{
+			fraiche[k--] = (n % 10) + '0';
+			n = n / 10;
+		}
+	}
+	fraiche[p + 1] = '\0';
+	return (fraiche);
 }

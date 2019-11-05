@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   ft_memmove.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmostafa <marvin@42.fr>                    +#+  +:+       +#+        */
+/*   By: ikadimi <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/10/05 14:23:14 by mmostafa          #+#    #+#             */
-/*   Updated: 2018/10/24 14:36:51 by mmostafa         ###   ########.fr       */
+/*   Created: 2018/10/25 16:29:48 by ikadimi           #+#    #+#             */
+/*   Updated: 2018/10/25 21:20:52 by ikadimi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,18 +14,29 @@
 
 void	*ft_memmove(void *dst, const void *src, size_t len)
 {
-	char	*srcc;
-	char	*dstc;
-	size_t	i;
+	unsigned char		*s1;
+	unsigned const char	*s2;
+	int					i;
 
-	i = -1;
-	srcc = (char *)src;
-	dstc = (char *)dst;
-	if (srcc < dstc)
-		while ((int)(--len) >= 0)
-			dstc[len] = srcc[len];
+	s1 = dst;
+	s2 = src;
+	if (s1 < s2)
+	{
+		i = 0;
+		while (0 < len--)
+		{
+			*(s1 + i) = *(s2 + i);
+			i++;
+		}
+	}
 	else
-		while (++i < len)
-			dstc[i] = srcc[i];
-	return (dst);
+	{
+		i = len - 1;
+		while (i >= 0)
+		{
+			*(s1 + i) = *(s2 + i);
+			i--;
+		}
+	}
+	return (s1);
 }

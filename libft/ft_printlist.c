@@ -1,33 +1,32 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_strdup.c                                        :+:      :+:    :+:   */
+/*   ft_printlist.c                                     :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: ikadimi <marvin@42.fr>                     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2018/10/25 16:46:23 by ikadimi           #+#    #+#             */
-/*   Updated: 2018/10/25 16:46:26 by ikadimi          ###   ########.fr       */
+/*   Created: 2018/10/25 16:34:57 by ikadimi           #+#    #+#             */
+/*   Updated: 2018/10/25 16:35:00 by ikadimi          ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "libft.h"
 
-char	*ft_strdup(const char *s1)
-{
-	char	*s;
-	int		i;
+#define INT 1
+#define CHAR 2
+#define STRING 3
 
-	i = 0;
-	while (s1[i] != '\0')
-		i++;
-	if (!(s = (char *)malloc((i + 1) * sizeof(char))))
-		return (NULL);
-	i = 0;
-	while (s1[i] != '\0')
+void	ft_printlist(t_list *list, int type)
+{
+	while (list != NULL)
 	{
-		s[i] = s1[i];
-		i++;
+		if (type == INT)
+			ft_putnbr((int)list->content);
+		else if (type == CHAR)
+			ft_putchar((char)list->content);
+		else if (type == STRING)
+			ft_putstr((char *)list->content);
+		ft_putstr("\n");
+		list = list->next;
 	}
-	s[i] = '\0';
-	return (s);
 }
